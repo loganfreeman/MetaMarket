@@ -8,6 +8,8 @@ build/
 .next/
 out/
 coverage/
+.eslintcache
+.turbo/
 
 # generated
 *.tsbuildinfo
@@ -32,4 +34,3 @@ pnpm-debug.log*
 
 # docker/local data
 postgres-data/
-redis-data/
