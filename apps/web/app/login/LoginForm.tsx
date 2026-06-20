@@ -11,11 +11,13 @@ import {
   Input,
   Label
 } from "@metamarket/ui";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "../lib/auth-client";
 
 export function LoginForm() {
+  const router = useRouter();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,10 +34,14 @@ export function LoginForm() {
         const result = await authClient.signUp.email({ name, email, password });
         if (result.error) throw new Error(result.error.message ?? "Sign up failed");
         setMessage({ type: "success", text: "Account created. You are signed in." });
+        router.push("/services");
+        router.refresh();
       } else {
         const result = await authClient.signIn.email({ email, password });
         if (result.error) throw new Error(result.error.message ?? "Sign in failed");
         setMessage({ type: "success", text: "Signed in." });
+        router.push("/services");
+        router.refresh();
       }
     } catch (error) {
       setMessage({

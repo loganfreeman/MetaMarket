@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { AuthNav } from "./AuthNav";
 import "./styles.css";
 
 export const metadata = {
@@ -20,9 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </Link>
               <nav className="flex items-center gap-4 text-sm">
                 <span className="hidden text-slate-500 sm:inline">Metadata-driven services</span>
-                <Link href="/login" className="font-medium text-slate-700 hover:text-slate-950">
-                  Sign in
-                </Link>
+                <AuthNav />
               </nav>
             </div>
           </header>
