@@ -56,5 +56,11 @@ export default tseslint.config(
       "react/react-in-jsx-scope": "off"
     }
   },
+  {
+    files: ["**/next-env.d.ts"],
+    rules: {
+      "@typescript-eslint/triple-slash-reference": "off"
+    }
+  },
   prettier
 );

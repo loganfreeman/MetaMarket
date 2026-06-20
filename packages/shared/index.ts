@@ -1,2 +1,2 @@
-export * from "./metadata/types";
+export type * from "./metadata/types";
 export * from "./metadata/zod";

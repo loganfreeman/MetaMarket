@@ -34,3 +34,4 @@ pnpm-debug.log*
 
 # docker/local data
 postgres-data/
+.envrc
