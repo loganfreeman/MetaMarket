@@ -1,0 +1,16 @@
+{
+  "name": "metamarket",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "db:generate": "pnpm --filter @metamarket/db prisma generate",
+    "db:migrate": "pnpm --filter @metamarket/db prisma migrate dev",
+    "db:seed": "pnpm --filter @metamarket/db seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

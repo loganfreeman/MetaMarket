@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ServiceCategory {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  description      String?
+  active           Boolean  @default(true)
+  currentVersionId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  versions       ServiceCategoryVersion[] @relation("CategoryVersions")
+  currentVersion ServiceCategoryVersion?  @relation("CurrentServiceCategoryVersion", fields: [currentVersionId], references: [id])
+  requests       ServiceRequest[]
+}
+
+model ServiceCategoryVersion {
+  id             String    @id @default(cuid())
+  categoryId     String
+  version        Int
+  status         String    @default("draft")
+  metadataSchema Json
+  publishedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  category   ServiceCategory  @relation("CategoryVersions", fields: [categoryId], references: [id])
+  currentFor ServiceCategory? @relation("CurrentServiceCategoryVersion")
+  requests   ServiceRequest[]
+
+  @@unique([categoryId, version])
+}
+
+model ServiceRequest {
+  id                String   @id @default(cuid())
+  categoryId        String
+  categoryVersionId String
+  customerId        String?
+  status            String   @default("submitted")
+  submittedMetadata Json
+  addressLine1      String?
+  addressLine2      String?
+  city              String?
+  region            String?
+  postalCode        String?
+  country           String?  @default("US")
+  latitude          Decimal?
+  longitude         Decimal?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  category        ServiceCategory        @relation(fields: [categoryId], references: [id])
+  categoryVersion ServiceCategoryVersion @relation(fields: [categoryVersionId], references: [id])
+}
