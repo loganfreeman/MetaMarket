@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import nextPlugin from "@next/eslint-plugin-next";
 import prettier from "eslint-config-prettier";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -37,6 +38,21 @@ export default tseslint.config(
           "varsIgnorePattern": "^_"
         }
       ]
+    }
+  },
+  {
+    files: ["apps/*/**/*.{ts,tsx}"],
+    plugins: {
+      "@next/next": nextPlugin
+    },
+    settings: {
+      next: {
+        rootDir: ["apps/web/", "apps/admin/"]
+      }
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules
     }
   },
   {

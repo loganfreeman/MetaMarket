@@ -21,6 +21,14 @@ pnpm db:seed
 pnpm dev
 ```
 
+Local apps:
+
+```txt
+Web:   http://localhost:3000
+API:   http://localhost:3001
+Admin: http://localhost:3002
+```
+
 Set these environment variables when running locally:
 
 ```bash

@@ -6,5 +6,5 @@
     "rootDir": ".",
     "declaration": true
   },
-  "include": ["form-renderer/**/*.tsx", "index.ts"]
+  "include": ["components/**/*.tsx", "form-renderer/**/*.tsx", "lib/**/*.ts", "index.ts"]
 }

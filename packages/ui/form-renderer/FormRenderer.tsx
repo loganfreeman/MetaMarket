@@ -1,10 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { buildSubmissionSchema, type MetadataField, type ServiceCategoryMetadataSchema } from "@metamarket/shared";
+import {
+  buildSubmissionSchema,
+  type MetadataField,
+  type ServiceCategoryMetadataSchema
+} from "@metamarket/shared";
 import { useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { Button } from "../components/button";
 import { FileField } from "./fields/FileField";
 import { SelectField } from "./fields/SelectField";
 import { TextareaField } from "./fields/TextareaField";
@@ -16,7 +21,11 @@ export type FormRendererProps = {
   submitLabel?: string;
 };
 
-export function FormRenderer({ metadataSchema, onSubmit, submitLabel = "Submit request" }: FormRendererProps) {
+export function FormRenderer({
+  metadataSchema,
+  onSubmit,
+  submitLabel = "Submit request"
+}: FormRendererProps) {
   const submissionSchema = useMemo(() => buildSubmissionSchema(metadataSchema), [metadataSchema]);
   const form = useForm<Record<string, unknown>>({
     resolver: zodResolver(submissionSchema)
@@ -29,13 +38,9 @@ export function FormRenderer({ metadataSchema, onSubmit, submitLabel = "Submit r
           <FieldSwitch key={field.name} field={field} />
         ))}
 
-        <button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-60"
-        >
+        <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Submitting..." : submitLabel}
-        </button>
+        </Button>
       </form>
     </FormProvider>
   );

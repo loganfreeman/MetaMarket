@@ -1,7 +1,7 @@
 "use client";
 
-import { FormRenderer } from "@metamarket/ui";
 import type { ServiceCategoryMetadataSchema } from "@metamarket/shared";
+import { Alert, FormRenderer } from "@metamarket/ui";
 import { useState } from "react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -36,7 +36,11 @@ export function ServiceRequestForm({
           setMessage("Request submitted.");
         }}
       />
-      {message ? <p>{message}</p> : null}
+      {message ? (
+        <Alert variant={message.includes("failed") ? "destructive" : "success"} className="mt-5">
+          {message}
+        </Alert>
+      ) : null}
     </>
   );
 }
