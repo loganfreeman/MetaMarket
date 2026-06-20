@@ -18,7 +18,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Link href="/services" className="text-sm font-semibold text-slate-950">
                 MetaMarket
               </Link>
-              <span className="text-sm text-slate-500">Metadata-driven services</span>
+              <nav className="flex items-center gap-4 text-sm">
+                <span className="hidden text-slate-500 sm:inline">Metadata-driven services</span>
+                <Link href="/login" className="font-medium text-slate-700 hover:text-slate-950">
+                  Sign in
+                </Link>
+              </nav>
             </div>
           </header>
           {children}

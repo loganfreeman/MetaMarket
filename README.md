@@ -34,4 +34,8 @@ Set these environment variables when running locally:
 ```bash
 DATABASE_URL=postgresql://metamarket:metamarket@localhost:5432/metamarket
 NEXT_PUBLIC_API_URL=http://localhost:3001
+BETTER_AUTH_URL=http://localhost:3001
+BETTER_AUTH_SECRET=dev-local-change-me
+WEB_ORIGIN=http://localhost:3000
+ADMIN_ORIGIN=http://localhost:3002
 ```

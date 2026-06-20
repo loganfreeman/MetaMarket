@@ -9,6 +9,7 @@
   "dependencies": {
     "@metamarket/shared": "workspace:*",
     "@metamarket/ui": "workspace:*",
+    "better-auth": "^1.6.20",
     "next": "^15.1.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

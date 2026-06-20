@@ -52,7 +52,8 @@ export default tseslint.config(
     },
     rules: {
       ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules
+      ...nextPlugin.configs["core-web-vitals"].rules,
+      "@next/next/no-html-link-for-pages": "off"
     }
   },
   {
@@ -76,6 +77,16 @@ export default tseslint.config(
     files: ["**/next-env.d.ts"],
     rules: {
       "@typescript-eslint/triple-slash-reference": "off"
+    }
+  },
+  {
+    files: ["**/*.cjs"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        module: "readonly",
+        require: "readonly"
+      }
     }
   },
   prettier
