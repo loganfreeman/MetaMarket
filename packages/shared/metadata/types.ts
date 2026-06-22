@@ -30,6 +30,11 @@ export type MetadataField = {
 
 export type ServiceCategoryMetadataSchema = {
   fields: MetadataField[];
+  matching?: {
+    requiredSkills?: string[];
+    radiusMiles?: number;
+    minRating?: number;
+  };
 };
 
 export type ServiceCategoryDto = {

@@ -17,9 +17,10 @@ model ServiceCategory {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  versions       ServiceCategoryVersion[] @relation("CategoryVersions")
-  currentVersion ServiceCategoryVersion?  @relation("CurrentServiceCategoryVersion", fields: [currentVersionId], references: [id])
-  requests       ServiceRequest[]
+  versions         ServiceCategoryVersion[] @relation("CategoryVersions")
+  currentVersion   ServiceCategoryVersion?  @relation("CurrentServiceCategoryVersion", fields: [currentVersionId], references: [id])
+  requests         ServiceRequest[]
+  providerServices ProviderService[]
 }
 
 model ServiceCategoryVersion {
@@ -40,25 +41,29 @@ model ServiceCategoryVersion {
 }
 
 model ServiceRequest {
-  id                String   @id @default(cuid())
+  id                String        @id @default(cuid())
   categoryId        String
   categoryVersionId String
   customerId        String?
-  status            String   @default("submitted")
+  status            RequestStatus @default(submitted)
   submittedMetadata Json
   addressLine1      String?
   addressLine2      String?
   city              String?
   region            String?
   postalCode        String?
-  country           String?  @default("US")
+  country           String?       @default("US")
   latitude          Decimal?
   longitude         Decimal?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   category        ServiceCategory        @relation(fields: [categoryId], references: [id])
   categoryVersion ServiceCategoryVersion @relation(fields: [categoryVersionId], references: [id])
+  customer        User?                  @relation("CustomerRequests", fields: [customerId], references: [id])
+  matches         ProviderMatch[]
+  conversations   Conversation[]
+  quotes          Quote[]
 }
 
 model User {
@@ -71,11 +76,13 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  sessions        Session[]
-  accounts        Account[]
-  customerProfile CustomerProfile?
-  providerProfile ProviderProfile?
-  adminRole       AdminRole?
+  sessions          Session[]
+  accounts          Account[]
+  submittedRequests ServiceRequest[] @relation("CustomerRequests")
+  messages          Message[]
+  customerProfile   CustomerProfile?
+  providerProfile   ProviderProfile?
+  adminRole         AdminRole?
 }
 
 model Session {
@@ -128,14 +135,22 @@ model CustomerProfile {
 }
 
 model ProviderProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  displayName String?
-  bio         String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  displayName     String
+  bio             String?
+  profilePhotoUrl String?
+  availability    Json?
+  rating          Float    @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services      ProviderService[]
+  matches       ProviderMatch[]
+  conversations Conversation[]
+  quotes        Quote[]
 }
 
 model AdminRole {
@@ -153,4 +168,134 @@ enum UserRole {
   provider
   admin
   super_admin
+}
+
+model ProviderService {
+  id                String    @id @default(cuid())
+  providerProfileId String
+  categoryId        String
+  skills            String[]
+  hourlyRateCents   Int?
+  quoteMode         QuoteMode @default(quote)
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  providerProfile ProviderProfile       @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+  category        ServiceCategory       @relation(fields: [categoryId], references: [id])
+  serviceAreas    ProviderServiceArea[]
+  matches         ProviderMatch[]
+
+  @@unique([providerProfileId, categoryId])
+}
+
+model ProviderServiceArea {
+  id                String   @id @default(cuid())
+  providerServiceId String
+  city              String?
+  region            String?
+  country           String?  @default("US")
+  latitude          Decimal?
+  longitude         Decimal?
+  radiusMiles       Int      @default(25)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  providerService ProviderService @relation(fields: [providerServiceId], references: [id], onDelete: Cascade)
+}
+
+model ProviderMatch {
+  id                String      @id @default(cuid())
+  serviceRequestId  String
+  providerProfileId String
+  providerServiceId String
+  score             Float       @default(0)
+  reasons           Json?
+  status            MatchStatus @default(matched)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  serviceRequest  ServiceRequest  @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  providerProfile ProviderProfile @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+  providerService ProviderService @relation(fields: [providerServiceId], references: [id], onDelete: Cascade)
+  conversation    Conversation?
+
+  @@unique([serviceRequestId, providerProfileId])
+}
+
+model Conversation {
+  id                String             @id @default(cuid())
+  serviceRequestId  String
+  providerProfileId String
+  providerMatchId   String?            @unique
+  status            ConversationStatus @default(open)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  serviceRequest  ServiceRequest  @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  providerProfile ProviderProfile @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+  providerMatch   ProviderMatch?  @relation(fields: [providerMatchId], references: [id])
+  messages        Message[]
+  quotes          Quote[]
+
+  @@unique([serviceRequestId, providerProfileId])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderUserId   String?
+  body           String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderUserId], references: [id])
+}
+
+model Quote {
+  id                String      @id @default(cuid())
+  conversationId    String
+  serviceRequestId  String
+  providerProfileId String
+  amountCents       Int
+  description       String?
+  estimatedDate     DateTime?
+  status            QuoteStatus @default(sent)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  conversation    Conversation    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  serviceRequest  ServiceRequest  @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  providerProfile ProviderProfile @relation(fields: [providerProfileId], references: [id], onDelete: Cascade)
+}
+
+enum RequestStatus {
+  submitted
+  matched
+  contacted
+  quoted
+  accepted
+  closed
+}
+
+enum MatchStatus {
+  matched
+  contacted
+  declined
+}
+
+enum ConversationStatus {
+  open
+  closed
+}
+
+enum QuoteStatus {
+  sent
+  accepted
+  declined
+}
+
+enum QuoteMode {
+  hourly
+  quote
 }

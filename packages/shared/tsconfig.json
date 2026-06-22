@@ -5,5 +5,5 @@
     "rootDir": ".",
     "declaration": true
   },
-  "include": ["auth/**/*.ts", "metadata/**/*.ts", "index.ts"]
+  "include": ["auth/**/*.ts", "marketplace/**/*.ts", "metadata/**/*.ts", "index.ts"]
 }

@@ -21,6 +21,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </Link>
               <nav className="flex items-center gap-4 text-sm">
                 <span className="hidden text-slate-500 sm:inline">Metadata-driven services</span>
+                <Link href="/search" className="font-medium text-slate-700 hover:text-slate-950">
+                  Search
+                </Link>
+                <Link
+                  href="/provider/dashboard"
+                  className="font-medium text-slate-700 hover:text-slate-950"
+                >
+                  Provider
+                </Link>
                 <AuthNav />
               </nav>
             </div>

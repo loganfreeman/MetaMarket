@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import type { MetadataField, ServiceCategoryMetadataSchema } from "./types";
+export type * from "../auth/types";
+export type * from "../marketplace/types";
 export type * from "./types";
 
 export const metadataFieldTypeSchema = z.enum([
@@ -69,7 +71,14 @@ export const serviceCategoryMetadataSchema = z.object({
 
         names.add(field.name);
       });
+    }),
+  matching: z
+    .object({
+      requiredSkills: z.array(z.string().min(1)).optional(),
+      radiusMiles: z.number().positive().optional(),
+      minRating: z.number().min(0).max(5).optional()
     })
+    .optional()
 });
 
 export function parseMetadataSchema(value: unknown): ServiceCategoryMetadataSchema {
